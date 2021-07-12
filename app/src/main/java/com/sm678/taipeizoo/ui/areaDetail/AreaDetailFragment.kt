@@ -43,8 +43,13 @@ class AreaDetailFragment : Fragment() {
 
         viewModel.navigateToPlantDetail.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                this.findNavController().navigate(
-                    AreaDetailFragmentDirections.actionAreaDetailFragmentToPlantDetailFragment())
+                val direction = AreaDetailFragmentDirections.actionAreaDetailFragmentToPlantDetailFragment()
+                this.findNavController().apply {
+                    if (currentDestination?.getAction(direction.actionId) != null)
+                        navigate(direction)
+                }
+//                this.findNavController().navigate(
+//                    AreaDetailFragmentDirections.actionAreaDetailFragmentToPlantDetailFragment())
 
                 viewModel.doneNavigateToPlantDetail()
             }

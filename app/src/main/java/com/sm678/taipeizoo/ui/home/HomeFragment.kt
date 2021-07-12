@@ -8,6 +8,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,12 +38,18 @@ class HomeFragment : Fragment() {
 
         viewModel.navigateToDetail.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                this.findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToAreaDetailFragment())
-
+                val direction = HomeFragmentDirections.actionHomeFragmentToAreaDetailFragment()
+                this.findNavController().apply {
+                    if (currentDestination?.getAction(direction.actionId) != null)
+                        navigate(direction)
+                }
+//                this.findNavController().navigate(
+//                    HomeFragmentDirections.actionHomeFragmentToAreaDetailFragment())
                 viewModel.doneNavigateToDetail()
             }
         })
+
+
 
         val adapter = HomeAreaAdapter(
             clickListener = HomeAreaListener {
@@ -63,4 +71,7 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    fun NavController.safeNavigate(direction: NavDirections) {
+        currentDestination?.getAction(direction.actionId)?.run { navigate(direction) }
+    }
 }
